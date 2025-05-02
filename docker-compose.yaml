@@ -14,7 +14,7 @@ services:
       - gotenberg
     ports:
       - '8888:80'
-      - '8080:8080'
+      - '8081:8080'
 
   gotenberg:
     image: gotenberg/gotenberg:8
