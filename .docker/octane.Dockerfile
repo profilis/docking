@@ -58,8 +58,6 @@ EXPOSE 80 8080
 ############# Default app ENV
 ENV APP_ENV="production"
 ENV APP_KEY="base64:/UnGygYvVBmIh+VgNhMj6MyI/ieXTtzUJsUL4OUtZGI="
-ENV DB_CONNECTION="sqlite"
-ENV DATABASE_URL="sqlite:////var/www/html/docking.sqlite"
 
 ############# Storage ENV
 
