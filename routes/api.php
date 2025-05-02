@@ -43,6 +43,10 @@ Route::prefix('v1')
             'document-templates/{documentTemplateUuidKey}/pdfs-async',
             [PdfRenderController::class, 'renderAsync']
         );
+        Route::get(
+            'document-templates/{documentTemplateUuidKey}/thumbnail',
+            [PdfRenderController::class, 'generateThumbnail']
+        );
 
         Route::get('document-files', [DocumentFileController::class, 'index']);
         Route::get('document-files/{documentFile}', [DocumentFileController::class, 'show']);

@@ -5,6 +5,7 @@ USER root
 RUN apt-get update && apt-get install -y \
     wget \
     unzip \
+    curl \
     fontconfig \
     fonts-roboto \
     fonts-open-sans \
@@ -13,13 +14,15 @@ RUN apt-get update && apt-get install -y \
     fonts-lato \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Manrope font from Google Fonts
+# Download and install Manrope font directly from Google Fonts CDN
 WORKDIR /tmp
 RUN mkdir -p /usr/share/fonts/truetype/manrope
-RUN wget -q "https://fonts.google.com/download?family=Manrope" -O manrope.zip \
-    && unzip -j manrope.zip -d manrope \
-    && find manrope -name "*.ttf" -exec cp {} /usr/share/fonts/truetype/manrope/ \; \
-    && rm -rf manrope manrope.zip
+
+# Download each Manrope variant directly from Google Fonts CDN
+RUN curl -s -o /usr/share/fonts/truetype/manrope/manrope-regular.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggexSg.ttf" \
+    && curl -s -o /usr/share/fonts/truetype/manrope/manrope-bold.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggmxSg.ttf" \
+    && curl -s -o /usr/share/fonts/truetype/manrope/manrope-medium.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggSxSg.ttf" \
+    && curl -s -o /usr/share/fonts/truetype/manrope/manrope-light.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggixSg.ttf"
 
 # Update font cache
 RUN fc-cache -f -v
