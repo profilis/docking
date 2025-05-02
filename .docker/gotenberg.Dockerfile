@@ -26,12 +26,14 @@ RUN curl -s -o manrope-regular.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7g
     curl -s -o manrope-extrabold.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggOxSg.ttf" && \
     curl -s -o manrope-extralight.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggaxSg.ttf"
 
-# Copy fonts to the recommended location
+# Copy fonts to the recommended location and update font cache
 RUN cp -r /tmp/manrope_fonts/*.ttf /usr/local/share/fonts/ && \
     fc-cache -f -v && \
     rm -rf /tmp/manrope_fonts
 
+# Switch back to default user and working directory
+WORKDIR /gotenberg
 USER gotenberg
 
-# Use the correct entrypoint
-ENTRYPOINT ["/usr/local/bin/gotenberg"] 
+# Use the confirmed entrypoint from the base image
+ENTRYPOINT ["/bin/gotenberg"] 
