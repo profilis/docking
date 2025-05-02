@@ -8,7 +8,7 @@ services:
     volumes:
       - app_storage:/var/www/html/storage/app
     networks:
-      - docking-network
+      - coolify
     depends_on:
       - gotenberg
     ports:
@@ -18,13 +18,13 @@ services:
   gotenberg:
     image: gotenberg/gotenberg:8
     networks:
-      - docking-network
+      - coolify
     ports:
       - '9898:3000'
 
 networks:
-  docking-network:
-    driver: bridge
+  coolify:
+    external: true # Use the existing Coolify network
 
 volumes:
   app_storage:
