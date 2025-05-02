@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     supervisor \
     nginx \
-    wkhtmltopdf
+    wkhtmltopdf \
+    nodejs \
+    npm
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo mbstring exif pcntl bcmath gd
@@ -26,7 +28,11 @@ COPY ./.docker/php-fpm.conf /usr/local/etc/php-fpm.d/
 RUN cp .docker/entrypoint.sh /entrypoint
 RUN chmod +x /entrypoint
 
-# The bundle already built (outer layer), no need to keep this to save size
+# Install npm dependencies and build Vite assets
+RUN npm ci
+RUN npm run build
+
+# No need to keep node_modules after build
 RUN rm -rf ./node_modules
 
 RUN php artisan optimize

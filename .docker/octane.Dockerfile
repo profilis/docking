@@ -13,7 +13,9 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     nginx \
     wkhtmltopdf \
-    libpq-dev
+    libpq-dev \
+    nodejs \
+    npm
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo mbstring exif pcntl bcmath gd sockets pdo_pgsql
@@ -29,7 +31,11 @@ COPY ./.docker/docking-host-octane.conf /etc/nginx/conf.d/default.conf
 RUN cp .docker/entrypoint.sh /entrypoint
 RUN chmod +x /entrypoint
 
-# The bundle already built, no need to keep this to save size
+# Install npm dependencies and build Vite assets
+RUN npm ci
+RUN npm run build
+
+# No need to keep node_modules after build
 RUN rm -rf ./node_modules
 
 RUN composer install
