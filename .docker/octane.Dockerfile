@@ -34,9 +34,14 @@ RUN rm -rf ./node_modules
 RUN composer install
 RUN php artisan optimize
 RUN php artisan storage:link
-RUN ./vendor/bin/rr get-binary
-RUN chmod +x ./rr
 
+# Download RoadRunner binary directly instead of using get-binary command
+# which hits GitHub API rate limits in Docker builds
+RUN curl -L https://github.com/roadrunner-server/roadrunner/releases/download/v2023.3.8/roadrunner-2023.3.8-linux-amd64.tar.gz -o rr.tar.gz \
+    && tar -xzf rr.tar.gz \
+    && mv roadrunner-2023.3.8-linux-amd64/rr /var/www/html/rr \
+    && chmod +x ./rr \
+    && rm -rf roadrunner-2023.3.8-linux-amd64 rr.tar.gz
 
 RUN chown -R www-data:www-data storage
 RUN chown -R www-data:www-data storage/app
