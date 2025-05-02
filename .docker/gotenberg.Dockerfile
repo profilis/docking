@@ -13,13 +13,13 @@ RUN apt-get update && apt-get install -y \
     fonts-lato \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Manrope font
+# Download and install Manrope font from Google Fonts
 WORKDIR /tmp
 RUN mkdir -p /usr/share/fonts/truetype/manrope
-RUN wget -q https://github.com/sharanda/manrope/releases/download/v4.504/manrope-4.504.zip \
-    && unzip manrope-4.504.zip -d manrope \
-    && cp manrope/*.ttf /usr/share/fonts/truetype/manrope/ \
-    && rm -rf /tmp/manrope /tmp/manrope-4.504.zip
+RUN wget -q "https://fonts.google.com/download?family=Manrope" -O manrope.zip \
+    && unzip -j manrope.zip -d manrope \
+    && find manrope -name "*.ttf" -exec cp {} /usr/share/fonts/truetype/manrope/ \; \
+    && rm -rf manrope manrope.zip
 
 # Update font cache
 RUN fc-cache -f -v
