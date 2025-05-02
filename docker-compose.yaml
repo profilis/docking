@@ -16,7 +16,9 @@ services:
       - '8081:8080'
 
   gotenberg:
-    image: gotenberg/gotenberg:8
+    build:
+      context: .
+      dockerfile: .docker/gotenberg.Dockerfile
     networks:
       - coolify
     ports:
