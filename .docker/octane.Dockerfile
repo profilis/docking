@@ -15,7 +15,10 @@ RUN apt-get update && apt-get install -y \
     wkhtmltopdf
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo mbstring exif pcntl bcmath gd sockets
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Copy project files
 COPY . .
@@ -28,6 +31,7 @@ RUN chmod +x /entrypoint
 # The bundle already built, no need to keep this to save size
 RUN rm -rf ./node_modules
 
+RUN composer install
 RUN php artisan optimize
 RUN php artisan storage:link
 RUN ./vendor/bin/rr get-binary
