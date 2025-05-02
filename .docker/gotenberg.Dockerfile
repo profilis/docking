@@ -1,47 +1,36 @@
 FROM gotenberg/gotenberg:8
 
-# Install necessary packages and fonts
 USER root
+
+# Install common fonts from apt repositories
 RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
     curl \
-    fontconfig \
     fonts-roboto \
     fonts-open-sans \
     fonts-noto \
     fonts-liberation \
     fonts-lato \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Manrope font directly from Google Fonts CDN
-WORKDIR /tmp
-RUN mkdir -p /usr/share/fonts/truetype/manrope
+# Create a fonts directory for our custom Manrope fonts
+RUN mkdir -p /tmp/manrope_fonts
 
-# Download each Manrope variant directly from Google Fonts CDN
-RUN curl -s -o /usr/share/fonts/truetype/manrope/manrope-regular.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggexSg.ttf" \
-    && curl -s -o /usr/share/fonts/truetype/manrope/manrope-bold.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggmxSg.ttf" \
-    && curl -s -o /usr/share/fonts/truetype/manrope/manrope-medium.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggSxSg.ttf" \
-    && curl -s -o /usr/share/fonts/truetype/manrope/manrope-light.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggixSg.ttf"
+# Download Manrope font files directly
+WORKDIR /tmp/manrope_fonts
+RUN curl -s -o manrope-regular.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggexSg.ttf" && \
+    curl -s -o manrope-bold.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggmxSg.ttf" && \
+    curl -s -o manrope-medium.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggSxSg.ttf" && \
+    curl -s -o manrope-light.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggixSg.ttf" && \
+    curl -s -o manrope-semibold.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggqxSg.ttf" && \
+    curl -s -o manrope-extrabold.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggOxSg.ttf" && \
+    curl -s -o manrope-extralight.ttf "https://fonts.gstatic.com/s/manrope/v14/xn7gYHE41ni1AdIRggaxSg.ttf"
 
-# Update font cache
-RUN fc-cache -f -v
+# Copy fonts to the recommended location
+RUN cp -r /tmp/manrope_fonts/*.ttf /usr/local/share/fonts/ && \
+    fc-cache -f -v && \
+    rm -rf /tmp/manrope_fonts
 
-# Find correct binary path - the base gotenberg image might have it in different locations
-RUN find / -name gotenberg -type f -executable 2>/dev/null | head -1 > /tmp/gotenberg_path
-RUN GOTENBERG_PATH=$(cat /tmp/gotenberg_path) && \
-    if [ -n "$GOTENBERG_PATH" ]; then \
-    echo "Found Gotenberg binary at $GOTENBERG_PATH"; \
-    mkdir -p /usr/local/bin && \
-    cp $GOTENBERG_PATH /usr/local/bin/gotenberg && \
-    chmod +x /usr/local/bin/gotenberg; \
-    else \
-    echo "Gotenberg binary not found"; \
-    exit 1; \
-    fi
-
-# Switch back to default user and working directory
-WORKDIR /gotenberg
 USER gotenberg
 
 # Use the correct entrypoint
