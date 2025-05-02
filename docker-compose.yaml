@@ -7,7 +7,9 @@ services:
       dockerfile: .docker/octane.Dockerfile
     volumes:
       - app_storage:/var/www/html/storage/app
-    links:
+    networks:
+      - docking-network
+    depends_on:
       - gotenberg
     ports:
       - '8888:80'
@@ -15,8 +17,14 @@ services:
 
   gotenberg:
     image: gotenberg/gotenberg:8
+    networks:
+      - docking-network
     ports:
       - '9898:3000'
+
+networks:
+  docking-network:
+    driver: bridge
 
 volumes:
   app_storage:
