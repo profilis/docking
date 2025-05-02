@@ -27,9 +27,22 @@ RUN curl -s -o /usr/share/fonts/truetype/manrope/manrope-regular.ttf "https://fo
 # Update font cache
 RUN fc-cache -f -v
 
+# Find correct binary path - the base gotenberg image might have it in different locations
+RUN find / -name gotenberg -type f -executable 2>/dev/null | head -1 > /tmp/gotenberg_path
+RUN GOTENBERG_PATH=$(cat /tmp/gotenberg_path) && \
+    if [ -n "$GOTENBERG_PATH" ]; then \
+    echo "Found Gotenberg binary at $GOTENBERG_PATH"; \
+    mkdir -p /usr/local/bin && \
+    cp $GOTENBERG_PATH /usr/local/bin/gotenberg && \
+    chmod +x /usr/local/bin/gotenberg; \
+    else \
+    echo "Gotenberg binary not found"; \
+    exit 1; \
+    fi
+
 # Switch back to default user and working directory
 WORKDIR /gotenberg
 USER gotenberg
 
-# Use the standard Gotenberg entrypoint
-ENTRYPOINT ["/gotenberg"] 
+# Use the correct entrypoint
+ENTRYPOINT ["/usr/local/bin/gotenberg"] 
